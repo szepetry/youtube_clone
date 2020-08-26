@@ -4,6 +4,7 @@ import '../theme/constants.dart';
 import 'package:youtube_api/youtube_api.dart';
 import '../widgets/mixin.dart';
 import '../apikey.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   @override
@@ -24,13 +25,14 @@ class _HomeState extends State<Home>
     _ytResults = [];
     // videoItem = [];
 
-    callAPI("Linus");
+    callAPI("Random Linus");
     super.initState();
   }
 
   Future<Null> callAPI(String query, {bool nextPage}) async {
     if (_ytResults.isNotEmpty) {
       // videoItem.clear();
+      _ytResults.clear();
     }
 
     if (nextPage == null) {
@@ -44,8 +46,28 @@ class _HomeState extends State<Home>
     return Container(
         color: Color(colorBG),
         child: _ytResults.length != 0
-            ? VideoList(
-                listData: _ytResults,
+            ? ListView(
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        SizedBox(width: 5,),
+                        chipBuilder("MOBA"),
+                        chipBuilder("Tech"),
+                        chipBuilder("Computers"),
+                        chipBuilder("Nvidia RTX"),
+                        chipBuilder("Anime"),
+                        chipBuilder("Ryzen"),
+                        chipBuilder("Platform games"),
+                        SizedBox(width: 5,),
+                      ],
+                    ),
+                  ),
+                  VideoList(
+                    listData: _ytResults,
+                  ),
+                ],
               )
             : Center(child: CircularProgressIndicator()));
   }
@@ -55,34 +77,19 @@ class _HomeState extends State<Home>
     setState(() {
       videoId = apiItem.id;
     });
+  }
 
-    // Navigator.of(context).push(PopupVideoPlayerRoute(
-    //   child: PopupVideoPlayer(
-    //     videoId: videoId,
-    //   ),
-    // ));
+  Widget chipBuilder(String label) {
+    return Container(
+      margin: EdgeInsets.only(left: 8.0, top: 2.0, bottom: 2.0),
+      child: ActionChip(
+        labelPadding: EdgeInsets.fromLTRB(6.0, 1.0, 6.0, 1.0),
+        label: Text(label),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        onPressed: (){
+          callAPI(label);
+        },
+      ),
+    );
   }
 }
-
-// class VideoItem extends StatelessWidget {
-//   final YT_API api;
-//   final ListPopupTap listPopupTap;
-
-//   const VideoItem({Key key, this.api, this.listPopupTap}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       child: Card(
-//         child: ListTile(
-//           leading: Image.network(api.thumbnail["high"]["url"]),
-//           title: Text(api.title),
-//           subtitle: Text(api.channelTitle),
-//           onTap: () {
-//             listPopupTap.onTap(api, context);
-//           },
-//         ),
-//       ),
-//     );
-//   }
-// }

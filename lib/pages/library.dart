@@ -20,7 +20,7 @@ class _LibraryState extends State<Library> {
     _ytResults = [];
     // videoItem = [];
 
-    callAPI("Linus");
+    callAPI("Random Japan");
     super.initState();
   }
 

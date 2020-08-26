@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/youtube_model.dart';
 import 'package:youtube_api/youtube_api.dart';
 import '../pages/video_details.dart';
-
+import 'package:http/http.dart' as http;
 
 class VideoList extends StatelessWidget {
   final List<YT_API> listData;
@@ -23,11 +23,10 @@ class VideoList extends StatelessWidget {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
+              debugPrint("Hereee: " + listData[index].channelId);
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => VideoDetail(
-                  detail: listData[index],
-                  listData: listData
-                ),
+                builder: (context) =>
+                    VideoDetail(detail: listData[index], listData: listData),
               ));
             },
             child: _buildHorizontalList(context, index),
@@ -42,11 +41,10 @@ class VideoList extends StatelessWidget {
           if (isMiniList || deviceOrientation == Orientation.landscape) {
             return InkWell(
               onTap: () {
+                debugPrint("Hereee: " + listData[index].channelId);
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => VideoDetail(
-                        detail: listData[index],
-                        listData: listData
-                      ),
+                  builder: (context) =>
+                      VideoDetail(detail: listData[index], listData: listData),
                 ));
               },
               child: _buildLandscapeList(context, index),
@@ -54,11 +52,11 @@ class VideoList extends StatelessWidget {
           } else {
             return InkWell(
               onTap: () {
+                debugPrint("Hereee: " + listData[index].channelId);
+
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => VideoDetail(
-                        detail: listData[index],
-                        listData: listData
-                      ),
+                  builder: (context) =>
+                      VideoDetail(detail: listData[index], listData: listData),
                 ));
               },
               child: _buildPortraitList(context, index),
@@ -66,9 +64,9 @@ class VideoList extends StatelessWidget {
           }
         },
         separatorBuilder: (context, index) => Divider(
-              height: 0.5,
-              color: Colors.white,
-            ),
+          height: 0.5,
+          color: Colors.white,
+        ),
         itemCount: listData.length,
       );
     }
@@ -85,23 +83,47 @@ class VideoList extends StatelessWidget {
                 image: NetworkImage(listData[index].thumbnail['high']['url']),
                 fit: BoxFit.cover),
           ),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Align(
+                  child: Text(
+                    listData[index].duration,
+                    style: TextStyle(
+                        backgroundColor: Colors.black, color: Colors.white),
+                  ),
+                  alignment: Alignment.bottomRight,
+                ),
+              ),
+            ],
+          ),
         ),
         ListTile(
           contentPadding: const EdgeInsets.all(8.0),
           dense: true,
-          leading: Icon(Icons.person),
-          // CircleAvatar(
-          //   backgroundImage: NetworkImage(listData[index].channelAvatar),
-          // ),
+          leading: 
+          // Icon(Icons.person),
+          CircleAvatar(
+            backgroundImage: NetworkImage(listData[index].channelPhotoURL),
+          ),
           title: Padding(
             padding: const EdgeInsets.only(bottom: 4.0),
-            child: Text(listData[index].title,style: TextStyle(color:Colors.white),),
+            child: Text(
+              listData[index].title,
+              style: TextStyle(color: Colors.white),
+            ),
           ),
           subtitle: Text(
-              "${listData[index].channelTitle} . ${1}M Views . ${listData[index].publishedAt}",style: TextStyle(color:Colors.grey[400]),),
+            "${listData[index].channelTitle} . ${listData[index].viewCount} views . ${listData[index].publishedAt}",
+            style: TextStyle(color: Colors.grey[400]),
+          ),
           trailing: Container(
               margin: const EdgeInsets.only(bottom: 20.0),
-              child: Icon(Icons.more_vert,color: Colors.white,)),
+              child: Icon(
+                Icons.more_vert,
+                color: Colors.white,
+              )),
         ),
       ],
     );
@@ -123,6 +145,21 @@ class VideoList extends StatelessWidget {
                   image: NetworkImage(listData[index].thumbnail['high']['url']),
                   fit: BoxFit.cover),
             ),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Align(
+                    child: Text(
+                      listData[index].duration,
+                      style: TextStyle(
+                          backgroundColor: Colors.black, color: Colors.white),
+                    ),
+                    alignment: Alignment.bottomRight,
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: Column(
@@ -133,16 +170,26 @@ class VideoList extends StatelessWidget {
                   dense: isMiniList ? true : false,
                   title: Padding(
                     padding: const EdgeInsets.only(bottom: 4.0),
-                    child: Text(listData[index].title,style: TextStyle(color:Colors.white),),
+                    child: Text(
+                      listData[index].title,
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                   subtitle: !isMiniList
                       ? Text(
-                          "${listData[index].channelTitle} . ${1}M views . ${listData[index].publishedAt}",style: TextStyle(color:Colors.grey[400]),)
+                          "${listData[index].channelTitle} . ${listData[index].viewCount} views . ${listData[index].publishedAt}",
+                          style: TextStyle(color: Colors.grey[400]),
+                        )
                       : Text(
-                          "${listData[index].channelTitle} . ${1}M views",style: TextStyle(color:Colors.grey[400]),),
+                          "${listData[index].channelTitle} . ${listData[index].viewCount} views",
+                          style: TextStyle(color: Colors.grey[400]),
+                        ),
                   trailing: Container(
                       margin: const EdgeInsets.only(bottom: 30.0),
-                      child: Icon(Icons.more_vert,color: Colors.white,)),
+                      child: Icon(
+                        Icons.more_vert,
+                        color: Colors.white,
+                      )),
                 ),
                 Container(
                   padding: const EdgeInsets.only(left: 8.0),
@@ -177,6 +224,21 @@ class VideoList extends StatelessWidget {
                 image: NetworkImage(listData[index].thumbnail['high']['url']),
               ),
             ),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Align(
+                    child: Text(
+                      listData[index].duration,
+                      style: TextStyle(
+                          backgroundColor: Colors.black, color: Colors.white),
+                    ),
+                    alignment: Alignment.bottomRight,
+                  ),
+                ),
+              ],
+            ),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,7 +251,8 @@ class VideoList extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 4.0),
                       child: Text(
                         listData[index].title,
-                        style: TextStyle(fontSize: 12.0,color: Colors.grey[400]),
+                        style:
+                            TextStyle(fontSize: 12.0, color: Colors.grey[400]),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),

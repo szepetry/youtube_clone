@@ -1,1 +1,1 @@
-const String apikey = "[APIKEY]";
+const String apikey = "<API_KEY>";

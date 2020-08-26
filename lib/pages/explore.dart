@@ -21,7 +21,7 @@ class _ExploreState extends State<Explore> {
     _ytResults = [];
     // videoItem = [];
 
-    callAPI("Linus");
+    callAPI("Random America");
     super.initState();
   }
 
